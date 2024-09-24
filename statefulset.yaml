@@ -68,7 +68,7 @@ spec:
       volumes:
         - configMap:
             defaultMode: 420
-            name: prod-home-assistant-zigbee2mqtt
+            name: zigbee2mqtt
           name: config-volume
         - emptyDir: {}
           name: data-volume
