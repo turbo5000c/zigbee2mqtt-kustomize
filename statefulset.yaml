@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  generation: 1
+  labels:
+    app.kubernetes.io/instance: zigbee2mqtt
+    app.kubernetes.io/name: zigbee2mqtt
+  name: zigbee2mqtt
+spec:
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Retain
+    whenScaled: Retain
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zigbee2mqtt
+  serviceName: 'zigbee2mqtt'
+  template:
+    metadata:
+      labels:
+        app: zigbee2mqtt
+        app.kubernetes.io/instance: zigbee2mqtt
+        app.kubernetes.io/name: zigbee2mqtt
+    spec:
+      containers:
+        - env:
+            - name: TZ
+              value: UTC
+          image: koenkk/zigbee2mqtt:1.37.1
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /
+              port: web
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 10
+          name: zigbee2mqtt
+          ports:
+            - containerPort: 8080
+              name: web
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 200m
+              memory: 600Mi
+            requests:
+              cpu: 200m
+              memory: 600Mi
+          securityContext:
+            capabilities:
+              add:
+                - SYS_ADMIN
+            privileged: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /app/data/configuration.yaml
+              name: config-volume
+              subPath: configuration.yaml
+            - mountPath: /app/data/
+              name: data-volume
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      volumes:
+        - configMap:
+            defaultMode: 420
+            name: prod-home-assistant-zigbee2mqtt
+          name: config-volume
+        - emptyDir: {}
+          name: data-volume
