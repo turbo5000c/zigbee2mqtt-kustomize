@@ -58,16 +58,16 @@ spec:
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
           volumeMounts:
-            - mountPath: /app/data/configuration.yaml
-              name: config-volume
-              subPath: configuration.yaml
-            - mountPath: /app/data/
+#            - mountPath: /app/data/configuration.yaml
+#              name: config-volume
+#              subPath: configuration.yaml
+            - mountPath: /backup/
               name: config
       volumes:
-        - configMap:
-            defaultMode: 420
-            name: zigbee2mqtt
-          name: config-volume
+#        - configMap:
+#            defaultMode: 420
+#            name: zigbee2mqtt
+#          name: config-volume
         # We remove the explicit claimName reference here
         - name: config
           persistentVolumeClaim:
