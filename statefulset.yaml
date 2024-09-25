@@ -62,13 +62,17 @@ spec:
               name: config-volume
               subPath: configuration.yaml
             - mountPath: /app/data/
-              name: data-volume
-      dnsPolicy: ClusterFirst
-      restartPolicy: Always
+              name: config
       volumes:
-        - configMap:
-            defaultMode: 420
-            name: zigbee2mqtt
-          name: config-volume
-        - emptyDir: {}
-          name: data-volume
+        # We remove the explicit claimName reference here
+        - name: config
+          persistentVolumeClaim:
+            claimName: zigbee2mqtt-pvc  # This matches the claim template
+  volumeClaimTemplates:
+    - metadata:
+        name: config  # The name must match the volumeMounts name
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
