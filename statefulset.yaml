@@ -60,14 +60,14 @@ spec:
           volumeMounts:
 #            - mountPath: /app/data/configuration.yaml
 #              name: config-volume
-              subPath: configuration.yaml
+#              subPath: configuration.yaml
             - mountPath: /app/data/
               name: config
       volumes:
 #        - configMap:
 #            defaultMode: 420
 #            name: zigbee2mqtt
-          name: config-volume
+#          name: config-volume
         # We remove the explicit claimName reference here
         - name: config
           persistentVolumeClaim:
