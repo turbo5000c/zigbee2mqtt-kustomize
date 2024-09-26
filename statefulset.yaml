@@ -65,12 +65,15 @@ spec:
 #            - mountPath: /app/data/configuration.yaml
 #              name: config-volume
 #              subPath: configuration.yaml
-#            - mountPath: /app/data
-#              name: zigbee2mqtt-pvc
+            - mountPath: /app/data
+              name: zigbee2mqtt-data
       volumes:
         - name: zoneinfo
           hostPath:
             path: /usr/share/zoneinfo
+        - name: zigbee-data
+          hostPath:
+            path: /home/tpearson/hass/zigbee2mqtt/k8s-data
 #        - configMap:
 #            defaultMode: 420
 #            name: zigbee2mqtt
