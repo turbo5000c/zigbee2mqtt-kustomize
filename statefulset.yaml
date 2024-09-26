@@ -65,12 +65,12 @@ spec:
 #            - mountPath: /app/data/configuration.yaml
 #              name: config-volume
 #              subPath: configuration.yaml
-            - mountPath: /app/data
-              name: zigbee2mqtt-pvc
-      volumes:
-        - name: zoneinfo
-          hostPath:
-            path: /usr/share/zoneinfo
+#            - mountPath: /app/data
+#              name: zigbee2mqtt-pvc
+#      volumes:
+#        - name: zoneinfo
+#          hostPath:
+#            path: /usr/share/zoneinfo
 #        - configMap:
 #            defaultMode: 420
 #            name: zigbee2mqtt
@@ -79,11 +79,11 @@ spec:
 #        - name: zigbee2mqtt-pvc
 #          persistentVolumeClaim:
 #            claimName: zigbee2mqtt-pvc  # This matches the claim template
-  volumeClaimTemplates:
-    - metadata:
-        name: zigbee2mqtt-pvc  # The name must match the volumeMounts name
-      spec:
-        accessModes: ["ReadWriteOnce"]
-        resources:
-          requests:
-            storage: 1Gi
+#  volumeClaimTemplates:
+#    - metadata:
+#        name: zigbee2mqtt-pvc  # The name must match the volumeMounts name
+#      spec:
+#        accessModes: ["ReadWriteOnce"]
+#        resources:
+#          requests:
+#            storage: 1Gi
