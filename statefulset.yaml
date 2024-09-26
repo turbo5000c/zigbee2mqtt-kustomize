@@ -71,7 +71,7 @@ spec:
         - name: zoneinfo
           hostPath:
             path: /usr/share/zoneinfo
-        - name: zigbee-data
+        - name: zigbee2mqtt-data
           hostPath:
             path: /home/tpearson/hass/zigbee2mqtt/k8s-data
 #        - configMap:
