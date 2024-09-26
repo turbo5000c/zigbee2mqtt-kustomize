@@ -65,7 +65,7 @@ spec:
 #            - mountPath: /app/data/configuration.yaml
 #              name: config-volume
 #              subPath: configuration.yaml
-            - mountPath: /backup/
+            - mountPath: /app/data/
               name: config
       volumes:
         - name: zoneinfo
