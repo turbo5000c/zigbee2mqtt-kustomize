@@ -58,12 +58,19 @@ spec:
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
           volumeMounts:
+            - name: zoneinfo
+              mountPath: /etc/localtime
+              subPath: America/New_York
+              readOnly: true
 #            - mountPath: /app/data/configuration.yaml
 #              name: config-volume
 #              subPath: configuration.yaml
             - mountPath: /backup/
               name: config
       volumes:
+        - name: zoneinfo
+          hostPath:
+            path: /usr/share/zoneinfo
 #        - configMap:
 #            defaultMode: 420
 #            name: zigbee2mqtt
