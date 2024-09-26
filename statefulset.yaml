@@ -76,7 +76,7 @@ spec:
 #            name: zigbee2mqtt
 #          name: config-volume
         # We remove the explicit claimName reference here
-        - name: config
+        - name: zigbee2mqtt-pvc
           persistentVolumeClaim:
             claimName: zigbee2mqtt-pvc  # This matches the claim template
   volumeClaimTemplates:
