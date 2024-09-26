@@ -67,10 +67,10 @@ spec:
 #              subPath: configuration.yaml
 #            - mountPath: /app/data
 #              name: zigbee2mqtt-pvc
-#      volumes:
-#        - name: zoneinfo
-#          hostPath:
-#            path: /usr/share/zoneinfo
+      volumes:
+        - name: zoneinfo
+          hostPath:
+            path: /usr/share/zoneinfo
 #        - configMap:
 #            defaultMode: 420
 #            name: zigbee2mqtt
