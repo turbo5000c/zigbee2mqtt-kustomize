@@ -66,7 +66,7 @@ spec:
 #              name: config-volume
 #              subPath: configuration.yaml
             - mountPath: /app/data/
-              name: config
+              name: zigbee2mqtt-pvc
       volumes:
         - name: zoneinfo
           hostPath:
@@ -81,7 +81,7 @@ spec:
             claimName: zigbee2mqtt-pvc  # This matches the claim template
   volumeClaimTemplates:
     - metadata:
-        name: config  # The name must match the volumeMounts name
+        name: zigbee2mqtt-pvc  # The name must match the volumeMounts name
       spec:
         accessModes: ["ReadWriteOnce"]
         resources:
