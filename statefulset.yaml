@@ -26,7 +26,7 @@ spec:
         - env:
             - name: TZ
               value: UTC
-          image: koenkk/zigbee2mqtt:2.1.3
+          image: koenkk/zigbee2mqtt:2.2.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 5
