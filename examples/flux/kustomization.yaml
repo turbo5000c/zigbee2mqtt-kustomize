@@ -1,0 +1,61 @@
+---
+# FluxCD Kustomization
+#
+# This resource tells FluxCD to apply the manifests from the GitRepository
+# source to your cluster. Flux will reconcile the state every 10 minutes.
+#
+# Before applying:
+#   1. Ensure the GitRepository (gitrepository.yaml) has been applied.
+#   2. Create the target namespace:
+#        kubectl create namespace zigbee2mqtt
+#   3. Apply this file:
+#        kubectl apply -f kustomization.yaml -n flux-system
+#
+# The patches below override the hardcoded hostPath and timezone in the base
+# StatefulSet. Update them to match your environment before applying.
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: zigbee2mqtt
+  namespace: flux-system
+spec:
+  interval: 10m
+  path: "./"
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: zigbee2mqtt-kustomize
+  targetNamespace: zigbee2mqtt
+  # Strategic merge patches allow you to customise the base manifests without
+  # forking the repository.
+  patches:
+    # Patch 1: Set the data directory path and timezone.
+    # Replace /var/lib/zigbee2mqtt/data with the actual path on your node.
+    # Replace UTC / America/New_York with your timezone.
+    - patch: |
+        apiVersion: apps/v1
+        kind: StatefulSet
+        metadata:
+          name: zigbee2mqtt
+        spec:
+          template:
+            spec:
+              # Pin the pod to the node with the USB dongle attached.
+              nodeName: my-node-name
+              containers:
+                - name: zigbee2mqtt
+                  env:
+                    - name: TZ
+                      value: America/New_York
+                  volumeMounts:
+                    - name: zoneinfo
+                      mountPath: /etc/localtime
+                      subPath: America/New_York
+                      readOnly: true
+              volumes:
+                - name: zigbee2mqtt-data
+                  hostPath:
+                    path: /var/lib/zigbee2mqtt/data
+      target:
+        kind: StatefulSet
+        name: zigbee2mqtt

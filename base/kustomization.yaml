@@ -1,0 +1,10 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - statefulset.yaml
+  - service.yaml
+  # Uncomment the line below to manage Zigbee2MQTT configuration via a
+  # ConfigMap. Also uncomment the config-volume entries in statefulset.yaml.
+  # See README.md for details.
+  # - configmap.yaml

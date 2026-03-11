@@ -1,0 +1,89 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/instance: zigbee2mqtt
+    app.kubernetes.io/name: zigbee2mqtt
+  name: zigbee2mqtt
+# This ConfigMap provides the main Zigbee2MQTT configuration file.
+# To use it:
+#   1. Uncomment "- configmap.yaml" in kustomization.yaml.
+#   2. Uncomment the config-volume entries in statefulset.yaml.
+#   3. Update the values below to match your environment.
+#
+# Key values to change:
+#   - mqtt.server      — Address of your MQTT broker
+#   - serial.port      — Serial port of your Zigbee coordinator
+#   - homeassistant.*  — Adjust discovery_topic / status_topic to match HA
+#
+# Note: Some state (device database, coordinator backup) is always written to
+# the data directory and cannot be managed via ConfigMap.
+data:
+  configuration.yaml: |
+    # devices.yaml and groups.yaml are stored in the data directory so that
+    # Zigbee2MQTT can write to them at runtime. The data directory is provided
+    # by the hostPath or PVC volume mounted at /app/data.
+    devices: devices.yaml
+    groups: groups.yaml
+
+    homeassistant:
+      # Must match the MQTT discovery prefix configured in Home Assistant.
+      discovery_topic: homeassistant
+      enabled: true
+      legacy_entity_attributes: true
+      legacy_triggers: false
+      # Must match the birth/will topic configured in Home Assistant MQTT.
+      status_topic: hass/status
+
+    ota:
+      disable_automatic_update_check: false
+      ikea_ota_use_test_url: false
+      update_check_interval: 1440
+
+    # Set to true temporarily to allow new devices to join.
+    permit_join: false
+
+    availability:
+      active:
+        timeout: 10
+      passive:
+        timeout: 1500
+
+    mqtt:
+      # Update this to point to your MQTT broker.
+      # Examples:
+      #   mqtt://mosquitto.home-assistant.svc.cluster.local:1883
+      #   mqtt://192.168.1.10:1883
+      server: mqtt://localhost:1883
+      # Uncomment to add authentication:
+      # user: zigbee2mqtt
+      # password: yourpassword
+
+    serial:
+      baudrate: 115200
+      disable_led: false
+      # Update this to match your Zigbee coordinator's serial port.
+      # Use /dev/serial/by-id/<id> for a stable reference across reboots.
+      port: /dev/ttyACM0
+      rtscts: false
+
+    frontend:
+      host: 0.0.0.0
+      port: 8080
+
+    advanced:
+      adapter_delay: 0
+      cache_state: true
+      cache_state_persistent: true
+      cache_state_send_on_startup: true
+      # Zigbee channel (11–26). Must not conflict with your Wi-Fi channel.
+      channel: 11
+      elapsed: false
+      last_seen: disable
+      legacy_api: false
+      log_level: info
+      log_output:
+        - console
+      report: true
+      timestamp_format: YYYY-MM-DD HH:mm:ss
+      transmit_power: 5
