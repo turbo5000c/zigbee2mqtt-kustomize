@@ -1,0 +1,23 @@
+---
+# PersistentVolumeClaim for Zigbee2MQTT data storage.
+#
+# This replaces the default hostPath volume in the base StatefulSet.
+# Use this when your cluster has a storage provider such as Longhorn, NFS,
+# Rook/Ceph, or any other ReadWriteOnce-capable StorageClass.
+#
+# Update storageClassName if your cluster uses a non-default storage class.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: zigbee2mqtt-data
+  labels:
+    app.kubernetes.io/instance: zigbee2mqtt
+    app.kubernetes.io/name: zigbee2mqtt
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  # Uncomment and set to your storage class if not using the cluster default.
+  # storageClassName: longhorn

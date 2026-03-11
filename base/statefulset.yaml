@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app.kubernetes.io/instance: zigbee2mqtt
+    app.kubernetes.io/name: zigbee2mqtt
+  name: zigbee2mqtt
+spec:
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Retain
+    whenScaled: Retain
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zigbee2mqtt
+  serviceName: 'zigbee2mqtt'
+  template:
+    metadata:
+      labels:
+        app: zigbee2mqtt
+        app.kubernetes.io/instance: zigbee2mqtt
+        app.kubernetes.io/name: zigbee2mqtt
+    spec:
+      # Pin this pod to the node that has the Zigbee USB dongle attached.
+      # Uncomment and set the node name:
+      # nodeName: my-node-name
+      # Or use a nodeSelector:
+      # nodeSelector:
+      #   kubernetes.io/hostname: my-node-name
+      containers:
+        - name: zigbee2mqtt
+          image: koenkk/zigbee2mqtt:2.9.1
+          imagePullPolicy: IfNotPresent
+          env:
+            # Set the timezone to match your location.
+            # Must match the zoneinfo volume mount subPath below.
+            - name: TZ
+              value: UTC
+          ports:
+            - containerPort: 8080
+              name: web
+              protocol: TCP
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /
+              port: web
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 10
+          resources:
+            limits:
+              cpu: 200m
+              memory: 600Mi
+            requests:
+              cpu: 200m
+              memory: 600Mi
+          # privileged + SYS_ADMIN are required to access the USB serial device.
+          securityContext:
+            capabilities:
+              add:
+                - SYS_ADMIN
+            privileged: true
+          volumeMounts:
+            # Provides /etc/localtime for the correct timezone.
+            # subPath must match the TZ environment variable above.
+            - name: zoneinfo
+              mountPath: /etc/localtime
+              subPath: UTC
+              readOnly: true
+            # Zigbee2MQTT data directory: stores device database, coordinator
+            # backup, and runtime configuration state.
+            # Update the hostPath below to point to an existing directory on
+            # your node. For a PVC-based alternative see examples/pvc/.
+            - mountPath: /app/data
+              name: zigbee2mqtt-data
+            # Uncomment to mount configuration.yaml from a ConfigMap.
+            # Requires the configmap.yaml to be enabled in kustomization.yaml.
+            # - mountPath: /app/data/configuration.yaml
+            #   name: config-volume
+            #   subPath: configuration.yaml
+      volumes:
+        # zoneinfo provides timezone data from the host.
+        - name: zoneinfo
+          hostPath:
+            path: /usr/share/zoneinfo
+        # Data directory — update this path to match your node's filesystem.
+        # The directory must exist on the node before the pod starts.
+        # Alternatively, replace this with a PVC (see examples/pvc/).
+        - name: zigbee2mqtt-data
+          hostPath:
+            path: /var/lib/zigbee2mqtt/data
+        # Uncomment to use ConfigMap-managed configuration.
+        # - name: config-volume
+        #   configMap:
+        #     defaultMode: 420
+        #     name: zigbee2mqtt

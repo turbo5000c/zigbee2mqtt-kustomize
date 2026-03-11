@@ -1,0 +1,32 @@
+---
+# Kustomize overlay — PVC-based storage
+#
+# This overlay replaces the base hostPath volume with a PersistentVolumeClaim.
+# Use this when your cluster has a storage provider and you prefer not to rely
+# on a specific node path.
+#
+# To apply this overlay directly:
+#   kubectl apply -k examples/pvc/ -n zigbee2mqtt
+#
+# To use with FluxCD, set spec.path to "examples/pvc" in your Kustomization CR.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Reference the base manifests from the base/ directory.
+resources:
+  - ../../base
+  - pvc.yaml
+
+patches:
+  # Replace the hostPath volume with the PVC defined in pvc.yaml.
+  # Uses a JSON 6902 patch to cleanly replace (not merge) the volume entry.
+  - target:
+      kind: StatefulSet
+      name: zigbee2mqtt
+    patch: |
+      - op: replace
+        path: /spec/template/spec/volumes/1
+        value:
+          name: zigbee2mqtt-data
+          persistentVolumeClaim:
+            claimName: zigbee2mqtt-data

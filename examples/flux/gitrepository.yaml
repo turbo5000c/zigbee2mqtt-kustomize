@@ -1,0 +1,21 @@
+---
+# FluxCD GitRepository
+#
+# This resource tells FluxCD to track the zigbee2mqtt-kustomize repository.
+# FluxCD will poll the repository at the specified interval and make the
+# contents available to Kustomization resources.
+#
+# Apply this to your cluster:
+#   kubectl apply -f gitrepository.yaml -n flux-system
+#
+# Or place it in your main Flux repository so Flux manages it automatically.
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: zigbee2mqtt-kustomize
+  namespace: flux-system
+spec:
+  interval: 1h
+  url: https://github.com/turbo5000c/zigbee2mqtt-kustomize
+  ref:
+    branch: main
