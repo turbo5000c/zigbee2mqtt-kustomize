@@ -29,7 +29,7 @@ spec:
       #   kubernetes.io/hostname: my-node-name
       containers:
         - name: zigbee2mqtt
-          image: koenkk/zigbee2mqtt:2.12.0
+          image: koenkk/zigbee2mqtt:2.12.1
           imagePullPolicy: IfNotPresent
           env:
             # Set the timezone to match your location.
